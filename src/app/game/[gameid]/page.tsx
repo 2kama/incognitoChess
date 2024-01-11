@@ -18,6 +18,19 @@ function GamePage({ params: { gameid } }: Props) {
   const [acceptChallenge, showAcceptChallenge] = useState(false);
   const [name, setName] = useState("");
 
+  //GAMEBOARD DATA
+  const [fen, setFen] = useState("")
+  const [previousMove, setPreviousMove] = useState("")
+
+
+  //SEND MOVE
+  const sendPlay = (gameFen: string, gameMove: string) => {
+    updateDoc(doc(db, "games", gameid), {
+      fen: [...gameData?.fen, gameFen],
+      moves: [...gameData?.moves, gameMove]
+    });
+  };
+
   useEffect(() => {
     const unsub = onSnapshot(doc(db, "games", gameid), (doc) => {
       if (doc.exists()) {
@@ -51,6 +64,9 @@ function GamePage({ params: { gameid } }: Props) {
     } else {
       showAcceptChallenge(false);
     }
+
+    setFen(gameData?.fen[gameData.fen.length - 1])
+    setPreviousMove(gameData?.moves[gameData.moves.length - 1])
   }, [gameData]);
 
   return (
@@ -69,11 +85,13 @@ function GamePage({ params: { gameid } }: Props) {
       {gameData && (
         <ChessBoard
           gameid={gameid}
-          fen={gameData?.fen}
+          fen={fen}
           orientation={orientation}
           white={gameData.white}
           black={gameData.black}
           end={gameData.end}
+          previousMove={previousMove}
+          sendPlay={sendPlay}
         />
       )}
     </>

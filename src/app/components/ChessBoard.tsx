@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Chessboard from "chessboardjsx";
 import { Chess } from "chess.js";
 import { useCheckDB } from "../hooks/useCheckDB";
@@ -8,12 +8,16 @@ import { db, doc, updateDoc } from "@/utils/firebase";
 
 type BoardType = {
   gameid: string;
-  fen: string[];
+  fen: string;
   orientation: "white" | "black";
   white: string;
   black: string;
   end: boolean;
+  previousMove: string;
+  sendPlay: (gameFen: string, gameMove: string) => void
 };
+
+const highlight = {backgroundColor: "rgba(255, 255, 0, 0.3)"}
 
 function ChessBoard({
   gameid,
@@ -22,28 +26,36 @@ function ChessBoard({
   white,
   black,
   end,
+  previousMove,
+  sendPlay
 }: BoardType) {
   const { player, color } = useCheckDB(gameid);
   const [clickPiece, setPiece] = useState("");
   const [squareStyles, setSquareStyles] = useState({});
 
-  let newSquareStyles = {};
+  const [previousMoveStyles, setPreviousMoveStyles] = useState({});
 
-  const game = new Chess(fen[fen.length - 1]);
+  const game = new Chess(fen);
 
+  //SHOW PREVIOUS MOVE
+  useEffect(() => {
+    if (previousMove) {
+      const squares = previousMove.split(",")
+      setPreviousMoveStyles({
+        [squares[0]]: highlight,
+        [squares[1]]: highlight
+      })
+    }
+  }, [previousMove])
+
+  //TRACK SQUARE CLICKS AND MOVES BY CLICKS
   const onSquareClick = async (square: string) => {
     if (!player || end) return;
-
-    const sendPlay = (fen: string[]) => {
-        updateDoc(doc(db, 'games', gameid), {
-            fen
-        })
-    }
 
     const setSquareColor = () => {
       setPiece(square);
       setSquareStyles({
-        [square]: { backgroundColor: "rgba(255, 255, 0, 0.3)" },
+        [square]: highlight,
       });
     };
 
@@ -69,12 +81,12 @@ function ChessBoard({
         return setSquareColor();
       }
 
+      sendPlay(game.fen(), `${clickPiece},${square}`);
       setPiece("");
-      sendPlay([...fen, game.fen()])
-      
     }
   };
 
+  //ARE PIECES DRAGGABLE
   const draggable = () => {
     return (
       player &&
@@ -86,6 +98,7 @@ function ChessBoard({
     );
   };
 
+  //IS USER ALLOWED TO DRAG PIECES
   const allowDrag = ({ piece }: { piece: string }) => {
     if (
       (game.turn() === "w" &&
@@ -108,12 +121,12 @@ function ChessBoard({
       <div>{orientation === "white" ? black : white}</div>
       <Chessboard
         id={gameid}
-        position={fen[fen.length - 1]}
+        position={fen}
         orientation={orientation}
         allowDrag={allowDrag}
         draggable={draggable()}
         onSquareClick={onSquareClick}
-        squareStyles={{ ...newSquareStyles, ...squareStyles }}
+        squareStyles={{ ...previousMoveStyles, ...squareStyles }}
       />
       <div>{orientation === "white" ? white : black}</div>
     </>
