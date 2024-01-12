@@ -5,6 +5,7 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { notFound } from "next/navigation";
 import { useCheckDB } from "@/app/hooks/useCheckDB";
 import { DocumentData, db, doc, onSnapshot, updateDoc } from "@/utils/firebase";
+import PGNBlock from "./PGNBlock";
 
 type Props = {
   params: { gameid: string };
@@ -82,18 +83,23 @@ function GamePage({ params: { gameid } }: Props) {
           <button onClick={sendAccept}>Accept</button>
         </>
       )}
-      {gameData && (
-        <ChessBoard
-          gameid={gameid}
-          fen={fen}
-          orientation={orientation}
-          white={gameData.white}
-          black={gameData.black}
-          end={gameData.end}
-          previousMove={previousMove}
-          sendPlay={sendPlay}
-        />
-      )}
+      <div className="flex">
+        {gameData && (
+          <>
+            <ChessBoard
+              gameid={gameid}
+              fen={fen}
+              orientation={orientation}
+              white={gameData.white}
+              black={gameData.black}
+              end={gameData.end}
+              previousMove={previousMove}
+              sendPlay={sendPlay}
+            />
+            <PGNBlock pgn={gameData.pgn} />
+          </>
+        )}
+      </div>
     </>
   );
 }

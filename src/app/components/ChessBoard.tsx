@@ -142,18 +142,20 @@ function ChessBoard({
 
   return (
     <>
-      <div>{orientation === "white" ? black : white}</div>
-      <Chessboard
-        id={gameid}
-        position={fen}
-        orientation={orientation}
-        allowDrag={allowDrag}
-        draggable={draggable()}
-        onSquareClick={onSquareClick}
-        onDrop={onDrop}
-        squareStyles={{ ...previousMoveStyles, ...squareStyles }}
-      />
-      <div>{orientation === "white" ? white : black}</div>
+      <div className="flex flex-col">
+        <div>{orientation === "white" ? black : white}</div>
+        <Chessboard
+          id={gameid}
+          position={fen}
+          orientation={orientation}
+          allowDrag={allowDrag}
+          draggable={draggable()}
+          onSquareClick={onSquareClick}
+          onDrop={onDrop}
+          squareStyles={{ ...previousMoveStyles, ...squareStyles }}
+        />
+        <div>{orientation === "white" ? white : black}</div>
+      </div>
     </>
   );
 }
