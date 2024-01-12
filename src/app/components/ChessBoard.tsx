@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import Chessboard from "chessboardjsx";
 import { Chess } from "chess.js";
 import { useCheckDB } from "../hooks/useCheckDB";
-import { db, doc, updateDoc } from "@/utils/firebase";
 
 type BoardType = {
   gameid: string;
@@ -14,10 +13,10 @@ type BoardType = {
   black: string;
   end: boolean;
   previousMove: string;
-  sendPlay: (gameFen: string, gameMove: string) => void
+  sendPlay: (gameFen: string, gameMove: string) => void;
 };
 
-const highlight = {backgroundColor: "rgba(255, 255, 0, 0.3)"}
+const highlight = { backgroundColor: "rgba(255, 255, 0, 0.3)" };
 
 function ChessBoard({
   gameid,
@@ -27,12 +26,11 @@ function ChessBoard({
   black,
   end,
   previousMove,
-  sendPlay
+  sendPlay,
 }: BoardType) {
   const { player, color } = useCheckDB(gameid);
   const [clickPiece, setPiece] = useState("");
   const [squareStyles, setSquareStyles] = useState({});
-
   const [previousMoveStyles, setPreviousMoveStyles] = useState({});
 
   const game = new Chess(fen);
@@ -40,13 +38,31 @@ function ChessBoard({
   //SHOW PREVIOUS MOVE
   useEffect(() => {
     if (previousMove) {
-      const squares = previousMove.split(",")
+      const squares = previousMove.split(",");
       setPreviousMoveStyles({
         [squares[0]]: highlight,
-        [squares[1]]: highlight
-      })
+        [squares[1]]: highlight,
+      });
     }
-  }, [previousMove])
+  }, [previousMove]);
+
+  //MOVES MADE BY DRAGGING AND DROPPING
+  const onDrop = async ({
+    sourceSquare,
+    targetSquare,
+  }: {
+    sourceSquare: string;
+    targetSquare: string;
+  }) => {
+    try {
+      game.move({
+        from: sourceSquare,
+        to: targetSquare,
+        promotion: "q", //for simplicity now
+      });
+    } catch (error) {}
+    sendPlay(game.fen(), `${sourceSquare},${targetSquare}`);
+  };
 
   //TRACK SQUARE CLICKS AND MOVES BY CLICKS
   const onSquareClick = async (square: string) => {
@@ -126,6 +142,7 @@ function ChessBoard({
         allowDrag={allowDrag}
         draggable={draggable()}
         onSquareClick={onSquareClick}
+        onDrop={onDrop}
         squareStyles={{ ...previousMoveStyles, ...squareStyles }}
       />
       <div>{orientation === "white" ? white : black}</div>

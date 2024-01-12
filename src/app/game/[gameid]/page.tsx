@@ -19,15 +19,14 @@ function GamePage({ params: { gameid } }: Props) {
   const [name, setName] = useState("");
 
   //GAMEBOARD DATA
-  const [fen, setFen] = useState("")
-  const [previousMove, setPreviousMove] = useState("")
-
+  const [fen, setFen] = useState("");
+  const [previousMove, setPreviousMove] = useState("");
 
   //SEND MOVE
   const sendPlay = (gameFen: string, gameMove: string) => {
     updateDoc(doc(db, "games", gameid), {
       fen: [...gameData?.fen, gameFen],
-      moves: [...gameData?.moves, gameMove]
+      moves: [...gameData?.moves, gameMove],
     });
   };
 
@@ -65,8 +64,8 @@ function GamePage({ params: { gameid } }: Props) {
       showAcceptChallenge(false);
     }
 
-    setFen(gameData?.fen[gameData.fen.length - 1])
-    setPreviousMove(gameData?.moves[gameData.moves.length - 1])
+    setFen(gameData?.fen[gameData.fen.length - 1]);
+    setPreviousMove(gameData?.moves[gameData.moves.length - 1]);
   }, [gameData]);
 
   return (
