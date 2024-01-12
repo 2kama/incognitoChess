@@ -17,6 +17,7 @@ type BoardType = {
 };
 
 const highlight = { backgroundColor: "rgba(255, 255, 0, 0.3)" };
+const checkHighlight = { backgroundColor: "rgba(255, 0, 0, 0.5)" };
 
 function ChessBoard({
   gameid,
@@ -32,6 +33,7 @@ function ChessBoard({
   const [clickPiece, setPiece] = useState("");
   const [squareStyles, setSquareStyles] = useState({});
   const [previousMoveStyles, setPreviousMoveStyles] = useState({});
+  const [inCheckStyles, setInCheckStyles] = useState({});
 
   const game = new Chess(fen);
 
@@ -67,6 +69,32 @@ function ChessBoard({
       game.history()[game.history().length - 1]
     );
   };
+
+  //FIND PIECE POSITION ON THE BOARD
+  const get_piece_position = (piece: { type: string; color: string }) => {
+    let squares: string[] = [];
+    game.board().map((row) => {
+      row.map((p) => {
+        if (p?.color === piece.color && p?.type === piece.type) {
+          squares.push(p.square);
+        }
+      });
+    });
+    return squares;
+  };
+
+  //HIGHLIGHT KING IN CHECK
+  useEffect(() => {
+    if (game.isCheck()) {
+      const piece = { type: "k", color: game.turn() };
+      const square = get_piece_position(piece);
+      setInCheckStyles({
+        [square[0]]: checkHighlight,
+      });
+    } else {
+      setInCheckStyles({});
+    }
+  }, [fen]);
 
   //TRACK SQUARE CLICKS AND MOVES BY CLICKS
   const onSquareClick = async (square: string) => {
@@ -152,7 +180,11 @@ function ChessBoard({
           draggable={draggable()}
           onSquareClick={onSquareClick}
           onDrop={onDrop}
-          squareStyles={{ ...previousMoveStyles, ...squareStyles }}
+          squareStyles={{
+            ...inCheckStyles,
+            ...previousMoveStyles,
+            ...squareStyles,
+          }}
         />
         <div>{orientation === "white" ? white : black}</div>
       </div>
