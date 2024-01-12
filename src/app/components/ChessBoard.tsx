@@ -13,7 +13,7 @@ type BoardType = {
   black: string;
   end: boolean;
   previousMove: string;
-  sendPlay: (gameFen: string, gameMove: string) => void;
+  sendPlay: (gameFen: string, gameMove: string, gamePgn: string) => void;
 };
 
 const highlight = { backgroundColor: "rgba(255, 255, 0, 0.3)" };
@@ -61,7 +61,11 @@ function ChessBoard({
         promotion: "q", //for simplicity now
       });
     } catch (error) {}
-    sendPlay(game.fen(), `${sourceSquare},${targetSquare}`);
+    sendPlay(
+      game.fen(),
+      `${sourceSquare},${targetSquare}`,
+      game.history()[game.history().length - 1]
+    );
   };
 
   //TRACK SQUARE CLICKS AND MOVES BY CLICKS
@@ -97,7 +101,11 @@ function ChessBoard({
         return setSquareColor();
       }
 
-      sendPlay(game.fen(), `${clickPiece},${square}`);
+      sendPlay(
+        game.fen(),
+        `${clickPiece},${square}`,
+        game.history()[game.history().length - 1]
+      );
       setPiece("");
     }
   };

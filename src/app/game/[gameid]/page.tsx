@@ -23,10 +23,11 @@ function GamePage({ params: { gameid } }: Props) {
   const [previousMove, setPreviousMove] = useState("");
 
   //SEND MOVE
-  const sendPlay = (gameFen: string, gameMove: string) => {
+  const sendPlay = (gameFen: string, gameMove: string, gamePgn: string) => {
     updateDoc(doc(db, "games", gameid), {
       fen: [...gameData?.fen, gameFen],
       moves: [...gameData?.moves, gameMove],
+      pgn: [...gameData?.pgn, gamePgn],
     });
   };
 
