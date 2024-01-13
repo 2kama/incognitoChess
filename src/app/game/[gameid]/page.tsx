@@ -4,8 +4,22 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 
 import { notFound } from "next/navigation";
 import { useCheckDB } from "@/app/hooks/useCheckDB";
-import { DocumentData, db, doc, onSnapshot, updateDoc } from "@/utils/firebase";
+import {
+  DocumentData,
+  addDoc,
+  collection,
+  db,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  updateDoc,
+} from "@/utils/firebase";
 import PGNBlock from "./PGNBlock";
+import Player from "./Player";
+import Timer from "./Timer";
+import WaitingOnPlayer from "./WaitingOnPlayer";
 
 type Props = {
   params: { gameid: string };
@@ -22,6 +36,7 @@ function GamePage({ params: { gameid } }: Props) {
   //GAMEBOARD DATA
   const [fen, setFen] = useState("");
   const [previousMove, setPreviousMove] = useState("");
+  const [movesTime, setMovesTime] = useState<{ data: DocumentData }[]>([]);
 
   //SEND MOVE
   const sendPlay = (gameFen: string, gameMove: string, gamePgn: string) => {
@@ -30,7 +45,35 @@ function GamePage({ params: { gameid } }: Props) {
       moves: [...gameData?.moves, gameMove],
       pgn: [...gameData?.pgn, gamePgn],
     });
+
+    addDoc(collection(db, `games/${gameid}/movesTime`), {
+      timestamp: serverTimestamp(),
+      color: orientation,
+    });
   };
+
+  const startGame = () => {
+    addDoc(collection(db, `games/${gameid}/movesTime`), {
+      timestamp: serverTimestamp(),
+      color: orientation === "white" ? gameData?.white : gameData?.black,
+    });
+  };
+
+  useEffect(() => {
+    const q = query(
+      collection(db, `games/${gameid}/movesTime`),
+      orderBy("timestamp", "asc")
+    );
+    const unsub = onSnapshot(q, (querySnapshot) => {
+      setMovesTime(
+        querySnapshot.docs.map((doc) => ({
+          data: doc.data(),
+        }))
+      );
+    });
+
+    return unsub;
+  }, []);
 
   useEffect(() => {
     const unsub = onSnapshot(doc(db, "games", gameid), (doc) => {
@@ -73,6 +116,13 @@ function GamePage({ params: { gameid } }: Props) {
   return (
     <>
       <div>GamePage {gameid}</div>
+      {isPlayer && movesTime.length < 2 && (
+        <WaitingOnPlayer
+          startGame={startGame}
+          movesTime={movesTime}
+          name={orientation === "white" ? gameData?.white : gameData?.black}
+        />
+      )}
       {gameData && acceptChallenge && (
         <>
           <input
@@ -86,16 +136,35 @@ function GamePage({ params: { gameid } }: Props) {
       <div className="flex">
         {gameData && (
           <>
-            <ChessBoard
-              gameid={gameid}
-              fen={fen}
-              orientation={orientation}
-              white={gameData.white}
-              black={gameData.black}
-              end={gameData.end}
-              previousMove={previousMove}
-              sendPlay={sendPlay}
-            />
+            <div className="flex flex-col">
+              <Player
+                name={orientation === "white" ? gameData.black : gameData.white}
+              />
+              <Timer
+                movesTime={movesTime}
+                minutes={gameData.minutes}
+                addSeconds={gameData.addSeconds}
+                color={orientation === "white" ? "black" : "white"}
+              />
+              <ChessBoard
+                gameid={gameid}
+                fen={fen}
+                orientation={orientation}
+                end={gameData.end}
+                previousMove={previousMove}
+                sendPlay={sendPlay}
+              />
+
+              <Player
+                name={orientation === "white" ? gameData.white : gameData.black}
+              />
+              <Timer
+                movesTime={movesTime}
+                minutes={gameData.minutes}
+                addSeconds={gameData.addSeconds}
+                color={orientation === "white" ? "white" : "black"}
+              />
+            </div>
             <PGNBlock pgn={gameData.pgn} />
           </>
         )}

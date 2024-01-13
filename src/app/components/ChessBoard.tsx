@@ -9,8 +9,6 @@ type BoardType = {
   gameid: string;
   fen: string;
   orientation: "white" | "black";
-  white: string;
-  black: string;
   end: boolean;
   previousMove: string;
   sendPlay: (gameFen: string, gameMove: string, gamePgn: string) => void;
@@ -23,8 +21,6 @@ function ChessBoard({
   gameid,
   fen,
   orientation,
-  white,
-  black,
   end,
   previousMove,
   sendPlay,
@@ -170,24 +166,20 @@ function ChessBoard({
 
   return (
     <>
-      <div className="flex flex-col">
-        <div>{orientation === "white" ? black : white}</div>
-        <Chessboard
-          id={gameid}
-          position={fen}
-          orientation={orientation}
-          allowDrag={allowDrag}
-          draggable={draggable()}
-          onSquareClick={onSquareClick}
-          onDrop={onDrop}
-          squareStyles={{
-            ...inCheckStyles,
-            ...previousMoveStyles,
-            ...squareStyles,
-          }}
-        />
-        <div>{orientation === "white" ? white : black}</div>
-      </div>
+      <Chessboard
+        id={gameid}
+        position={fen}
+        orientation={orientation}
+        allowDrag={allowDrag}
+        draggable={draggable()}
+        onSquareClick={onSquareClick}
+        onDrop={onDrop}
+        squareStyles={{
+          ...inCheckStyles,
+          ...previousMoveStyles,
+          ...squareStyles,
+        }}
+      />
     </>
   );
 }
