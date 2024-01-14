@@ -181,6 +181,7 @@ function GamePage({ params: { gameid } }: Props) {
                 fen={fen}
                 orientation={orientation}
                 end={gameData.end}
+                notStarted={movesTime.length < 2}
                 previousMove={previousMove}
                 sendPlay={sendPlay}
               />

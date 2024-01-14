@@ -17,6 +17,7 @@ type BoardType = {
     gamePgn: string,
     outCome: any[]
   ) => void;
+  notStarted: boolean;
 };
 
 const highlight = { backgroundColor: "rgba(255, 255, 0, 0.3)" };
@@ -29,6 +30,7 @@ function ChessBoard({
   end,
   previousMove,
   sendPlay,
+  notStarted,
 }: BoardType) {
   const { player, color } = useCheckDB(gameid);
   const [clickPiece, setPiece] = useState("");
@@ -138,7 +140,7 @@ function ChessBoard({
 
   //TRACK SQUARE CLICKS AND MOVES BY CLICKS
   const onSquareClick = async (square: string) => {
-    if (!player || end) return;
+    if (!player || end || notStarted) return;
 
     const setSquareColor = () => {
       setPiece(square);
@@ -187,7 +189,8 @@ function ChessBoard({
       !game.isDraw() &&
       !game.isStalemate() &&
       !game.isThreefoldRepetition() &&
-      !end
+      !end &&
+      !notStarted
     );
   };
 
