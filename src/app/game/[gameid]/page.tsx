@@ -21,6 +21,7 @@ import Player from "./Player";
 import Timer from "./Timer";
 import WaitingOnPlayer from "./WaitingOnPlayer";
 import Outcome from "./Outcome";
+import Offers from "./Offers";
 
 type Props = {
   params: { gameid: string };
@@ -59,6 +60,12 @@ function GamePage({ params: { gameid } }: Props) {
     addDoc(collection(db, `games/${gameid}/movesTime`), {
       timestamp: serverTimestamp(),
       color: orientation,
+    });
+  };
+
+  const updateGame = (updateData: any) => {
+    updateDoc(doc(db, "games", gameid), {
+      ...updateData,
     });
   };
 
@@ -147,22 +154,28 @@ function GamePage({ params: { gameid } }: Props) {
         {gameData && (
           <>
             <div className="flex flex-col">
-              <Player
-                name={orientation === "white" ? gameData.black : gameData.white}
-              />
-              <Timer
-                movesTime={movesTime}
-                minutes={gameData.minutes}
-                addSeconds={gameData.addSeconds}
-                color={orientation === "white" ? "black" : "white"}
-                timerStart={movesTime.length > 1}
-                playerTurn={
-                  orientation === "white"
-                    ? gameData.turn === "black"
-                    : gameData.turn === "white"
-                }
-                end={gameData.end}
-              />
+              <div className="flex flex-row">
+                <Player
+                  name={
+                    orientation === "white" ? gameData.black : gameData.white
+                  }
+                />
+                <Timer
+                  movesTime={movesTime}
+                  minutes={gameData.minutes}
+                  addSeconds={gameData.addSeconds}
+                  color={orientation === "white" ? "black" : "white"}
+                  timerStart={movesTime.length > 1}
+                  playerTurn={
+                    orientation === "white"
+                      ? gameData.turn === "black"
+                      : gameData.turn === "white"
+                  }
+                  end={gameData.end}
+                  isPlayer={isPlayer}
+                  updateGame={updateGame}
+                />
+              </div>
               <ChessBoard
                 gameid={gameid}
                 fen={fen}
@@ -171,23 +184,35 @@ function GamePage({ params: { gameid } }: Props) {
                 previousMove={previousMove}
                 sendPlay={sendPlay}
               />
-
-              <Player
-                name={orientation === "white" ? gameData.white : gameData.black}
-              />
-              <Timer
-                movesTime={movesTime}
-                minutes={gameData.minutes}
-                addSeconds={gameData.addSeconds}
-                color={orientation === "white" ? "white" : "black"}
-                timerStart={movesTime.length > 1}
-                playerTurn={
-                  orientation === "white"
-                    ? gameData.turn === "white"
-                    : gameData.turn === "black"
-                }
-                end={gameData.end}
-              />
+              <div className="flex flex-row">
+                <Player
+                  name={
+                    orientation === "white" ? gameData.white : gameData.black
+                  }
+                />
+                <Timer
+                  movesTime={movesTime}
+                  minutes={gameData.minutes}
+                  addSeconds={gameData.addSeconds}
+                  color={orientation === "white" ? "white" : "black"}
+                  timerStart={movesTime.length > 1}
+                  playerTurn={
+                    orientation === "white"
+                      ? gameData.turn === "white"
+                      : gameData.turn === "black"
+                  }
+                  end={gameData.end}
+                  isPlayer={isPlayer}
+                  updateGame={updateGame}
+                />
+              </div>
+              {isPlayer && !gameData.end && (
+                <Offers
+                  drawOffer={gameData.drawOffer}
+                  updateGame={updateGame}
+                  color={orientation}
+                />
+              )}
             </div>
             <div className="flex flex-col">
               <Outcome outcome={gameData.outCome} result={gameData.result} />

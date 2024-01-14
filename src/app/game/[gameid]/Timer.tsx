@@ -33,6 +33,8 @@ type Props = {
   timerStart: boolean;
   playerTurn: boolean;
   end: boolean;
+  isPlayer: boolean;
+  updateGame: (updateData: any) => void;
 };
 
 function Timer({
@@ -43,6 +45,8 @@ function Timer({
   timerStart,
   playerTurn,
   end,
+  isPlayer,
+  updateGame,
 }: Props) {
   let timeGone = 0;
   let numberOfPlays = 0;
@@ -56,7 +60,19 @@ function Timer({
     }
   });
 
+  const sendUpdate = () => {
+    updateGame({
+      outCome: `${color} lost on time`,
+      end: true,
+      result: color === "black" ? "1 - 0" : "0 - 1",
+    });
+  };
+
   const timer = minutes * 60 - timeGone + numberOfPlays * addSeconds;
+
+  if (timer <= 0) {
+    sendUpdate();
+  }
 
   const time = new Date();
   time.setSeconds(time.getSeconds() + timer);
@@ -65,7 +81,10 @@ function Timer({
     <>
       {!end && Number.isFinite(timer) ? (
         timerStart && playerTurn ? (
-          <MyTimer expiryTimestamp={time} onExpire={() => alert("done")} />
+          <MyTimer
+            expiryTimestamp={time}
+            onExpire={isPlayer ? () => sendUpdate() : () => null}
+          />
         ) : (
           `${setNumber(Math.floor(timer / 60))}:${setNumber(timer % 60)}`
         )
