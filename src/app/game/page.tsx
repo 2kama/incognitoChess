@@ -23,6 +23,8 @@ function Game() {
       end: false,
       moves: [],
       turn: "white",
+      outCome: "White to play",
+      result: "",
     }).then((docRef) => {
       const { setGame } = useCheckDB(docRef.id);
       setGame("white");

@@ -11,7 +11,12 @@ type BoardType = {
   orientation: "white" | "black";
   end: boolean;
   previousMove: string;
-  sendPlay: (gameFen: string, gameMove: string, gamePgn: string) => void;
+  sendPlay: (
+    gameFen: string,
+    gameMove: string,
+    gamePgn: string,
+    outCome: any[]
+  ) => void;
 };
 
 const highlight = { backgroundColor: "rgba(255, 255, 0, 0.3)" };
@@ -44,6 +49,44 @@ function ChessBoard({
     }
   }, [previousMove]);
 
+  const outCome = () => {
+    let color = "";
+    if (game.turn() === "w") {
+      color = "White";
+    } else {
+      color = "Black";
+    }
+
+    if (game.isThreefoldRepetition()) {
+      return [`Game drawn by threefold repetition`, "1/2 - 1/2", true];
+    }
+    if (game.isStalemate()) {
+      return ["Game is a stalement", "1/2 - 1/2", true];
+    }
+    if (game.isDraw()) {
+      return ["Game drawn", "1/2 - 1/2", true];
+    }
+    if (game.isCheckmate()) {
+      return [
+        `${color === "Black" ? "White" : "Black"} won by checkmate`,
+        `${color === "Black" ? "1 - 0" : "0 - 1"}`,
+        true,
+      ];
+    }
+    if (game.inCheck()) {
+      return [
+        `${color === "Black" ? "Black king in check" : "White king in check"}`,
+        "",
+        false,
+      ];
+    }
+    return [
+      `${color === "Black" ? "Black to play" : "White to play"}`,
+      "",
+      false,
+    ];
+  };
+
   //MOVES MADE BY DRAGGING AND DROPPING
   const onDrop = async ({
     sourceSquare,
@@ -62,7 +105,8 @@ function ChessBoard({
     sendPlay(
       game.fen(),
       `${sourceSquare},${targetSquare}`,
-      game.history()[game.history().length - 1]
+      game.history()[game.history().length - 1],
+      outCome()
     );
   };
 
@@ -128,7 +172,8 @@ function ChessBoard({
       sendPlay(
         game.fen(),
         `${clickPiece},${square}`,
-        game.history()[game.history().length - 1]
+        game.history()[game.history().length - 1],
+        outCome()
       );
       setPiece("");
     }

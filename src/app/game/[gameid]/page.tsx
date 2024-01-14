@@ -20,6 +20,7 @@ import PGNBlock from "./PGNBlock";
 import Player from "./Player";
 import Timer from "./Timer";
 import WaitingOnPlayer from "./WaitingOnPlayer";
+import Outcome from "./Outcome";
 
 type Props = {
   params: { gameid: string };
@@ -39,12 +40,20 @@ function GamePage({ params: { gameid } }: Props) {
   const [movesTime, setMovesTime] = useState<{ data: DocumentData }[]>([]);
 
   //SEND MOVE
-  const sendPlay = (gameFen: string, gameMove: string, gamePgn: string) => {
+  const sendPlay = (
+    gameFen: string,
+    gameMove: string,
+    gamePgn: string,
+    outCome: string[]
+  ) => {
     updateDoc(doc(db, "games", gameid), {
       fen: [...gameData?.fen, gameFen],
       moves: [...gameData?.moves, gameMove],
       pgn: [...gameData?.pgn, gamePgn],
       turn: gameData?.turn === "white" ? "black" : "white",
+      outCome: outCome[0],
+      result: outCome[1],
+      end: outCome[2],
     });
 
     addDoc(collection(db, `games/${gameid}/movesTime`), {
@@ -152,6 +161,7 @@ function GamePage({ params: { gameid } }: Props) {
                     ? gameData.turn === "black"
                     : gameData.turn === "white"
                 }
+                end={gameData.end}
               />
               <ChessBoard
                 gameid={gameid}
@@ -176,9 +186,13 @@ function GamePage({ params: { gameid } }: Props) {
                     ? gameData.turn === "white"
                     : gameData.turn === "black"
                 }
+                end={gameData.end}
               />
             </div>
-            <PGNBlock pgn={gameData.pgn} />
+            <div className="flex flex-col">
+              <Outcome outcome={gameData.outCome} result={gameData.result} />
+              <PGNBlock pgn={gameData.pgn} />
+            </div>
           </>
         )}
       </div>

@@ -32,6 +32,7 @@ type Props = {
   color: string;
   timerStart: boolean;
   playerTurn: boolean;
+  end: boolean;
 };
 
 function Timer({
@@ -41,6 +42,7 @@ function Timer({
   color,
   timerStart,
   playerTurn,
+  end,
 }: Props) {
   let timeGone = 0;
   let numberOfPlays = 0;
@@ -61,7 +63,7 @@ function Timer({
 
   return (
     <>
-      {Number.isFinite(timer) ? (
+      {!end && Number.isFinite(timer) ? (
         timerStart && playerTurn ? (
           <MyTimer expiryTimestamp={time} onExpire={() => alert("done")} />
         ) : (
