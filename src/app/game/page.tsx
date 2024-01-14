@@ -22,6 +22,7 @@ function Game() {
       timestamp: serverTimestamp(),
       end: false,
       moves: [],
+      turn: "white",
     }).then((docRef) => {
       const { setGame } = useCheckDB(docRef.id);
       setGame("white");

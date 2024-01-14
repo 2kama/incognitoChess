@@ -44,6 +44,7 @@ function GamePage({ params: { gameid } }: Props) {
       fen: [...gameData?.fen, gameFen],
       moves: [...gameData?.moves, gameMove],
       pgn: [...gameData?.pgn, gamePgn],
+      turn: gameData?.turn === "white" ? "black" : "white",
     });
 
     addDoc(collection(db, `games/${gameid}/movesTime`), {
@@ -145,6 +146,12 @@ function GamePage({ params: { gameid } }: Props) {
                 minutes={gameData.minutes}
                 addSeconds={gameData.addSeconds}
                 color={orientation === "white" ? "black" : "white"}
+                timerStart={movesTime.length > 1}
+                playerTurn={
+                  orientation === "white"
+                    ? gameData.turn === "black"
+                    : gameData.turn === "white"
+                }
               />
               <ChessBoard
                 gameid={gameid}
@@ -163,6 +170,12 @@ function GamePage({ params: { gameid } }: Props) {
                 minutes={gameData.minutes}
                 addSeconds={gameData.addSeconds}
                 color={orientation === "white" ? "white" : "black"}
+                timerStart={movesTime.length > 1}
+                playerTurn={
+                  orientation === "white"
+                    ? gameData.turn === "white"
+                    : gameData.turn === "black"
+                }
               />
             </div>
             <PGNBlock pgn={gameData.pgn} />

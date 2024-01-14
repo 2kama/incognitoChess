@@ -14,7 +14,8 @@
     "firebase": "^10.7.1",
     "next": "14.0.4",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-timer-hook": "^3.0.7"
   },
   "devDependencies": {
     "@types/node": "^20",
