@@ -22,6 +22,7 @@ import Timer from "./Timer";
 import WaitingOnPlayer from "./WaitingOnPlayer";
 import Outcome from "./Outcome";
 import Offers from "./Offers";
+import FenNav from "./FenNav";
 
 type Props = {
   params: { gameid: string };
@@ -34,6 +35,7 @@ function GamePage({ params: { gameid } }: Props) {
   const [isPlayer, setIsPlayer] = useState(false);
   const [acceptChallenge, showAcceptChallenge] = useState(false);
   const [name, setName] = useState("");
+  const [history, setHistory] = useState(1);
 
   //GAMEBOARD DATA
   const [fen, setFen] = useState("");
@@ -126,9 +128,9 @@ function GamePage({ params: { gameid } }: Props) {
       showAcceptChallenge(false);
     }
 
-    setFen(gameData?.fen[gameData.fen.length - 1]);
-    setPreviousMove(gameData?.moves[gameData.moves.length - 1]);
-  }, [gameData]);
+    setFen(gameData?.fen[gameData.fen.length - history]);
+    setPreviousMove(gameData?.moves[gameData.moves.length - history]);
+  }, [gameData, history]);
 
   return (
     <>
@@ -217,7 +219,8 @@ function GamePage({ params: { gameid } }: Props) {
             </div>
             <div className="flex flex-col">
               <Outcome outcome={gameData.outCome} result={gameData.result} />
-              <PGNBlock pgn={gameData.pgn} />
+              <FenNav fen={fen} end={gameData.end} setHistory={setHistory} history={history} limit={gameData.fen.length} />
+              <PGNBlock history={history} end={gameData.end} setHistory={setHistory} pgn={gameData.pgn} />
             </div>
           </>
         )}
