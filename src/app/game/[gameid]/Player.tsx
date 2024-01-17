@@ -6,7 +6,7 @@ type Props = {
 };
 
 function Player({ name }: Props) {
-  return <div>{name}</div>;
+  return <div>{name ? name : "[No Opponent yet]"}</div>;
 }
 
 export default Player;

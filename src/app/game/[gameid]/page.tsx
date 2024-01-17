@@ -43,6 +43,21 @@ function GamePage({ params: { gameid } }: Props) {
   const [previousMove, setPreviousMove] = useState("");
   const [movesTime, setMovesTime] = useState<{ data: DocumentData }[]>([]);
 
+  //UPDATE GAME
+  const updateGame = (updateData: any) => {
+    return updateDoc(doc(db, "games", gameid), {
+      ...updateData,
+    });
+  };
+
+  //UPDATE MOVES
+  const updateMoves = (updateData: any) => {
+    addDoc(collection(db, `games/${gameid}/movesTime`), {
+      ...updateData,
+      timestamp: serverTimestamp(),
+    });
+  };
+
   //SEND MOVE
   const sendPlay = (
     gameFen: string,
@@ -50,7 +65,7 @@ function GamePage({ params: { gameid } }: Props) {
     gamePgn: string,
     outCome: string[]
   ) => {
-    updateDoc(doc(db, "games", gameid), {
+    updateGame({
       fen: [...gameData?.fen, gameFen],
       moves: [...gameData?.moves, gameMove],
       pgn: [...gameData?.pgn, gamePgn],
@@ -60,25 +75,12 @@ function GamePage({ params: { gameid } }: Props) {
       end: outCome[2],
     });
 
-    addDoc(collection(db, `games/${gameid}/movesTime`), {
-      timestamp: serverTimestamp(),
+    updateMoves({
       color: orientation,
     });
   };
 
-  const updateGame = (updateData: any) => {
-    updateDoc(doc(db, "games", gameid), {
-      ...updateData,
-    });
-  };
-
-  const startGame = () => {
-    addDoc(collection(db, `games/${gameid}/movesTime`), {
-      timestamp: serverTimestamp(),
-      color: orientation === "white" ? gameData?.white : gameData?.black,
-    });
-  };
-
+  //GET MOVES LIST
   useEffect(() => {
     const q = query(
       collection(db, `games/${gameid}/movesTime`),
@@ -95,6 +97,7 @@ function GamePage({ params: { gameid } }: Props) {
     return unsub;
   }, []);
 
+  //GET GAME DATA
   useEffect(() => {
     const unsub = onSnapshot(doc(db, "games", gameid), (doc) => {
       if (doc.exists()) {
@@ -107,9 +110,10 @@ function GamePage({ params: { gameid } }: Props) {
     return unsub;
   }, []);
 
+  //ACCEPT GAME
   const sendAccept = async () => {
     const pickSide = gameData?.white === "" ? "white" : "black";
-    await updateDoc(doc(db, "games", gameid), {
+    await updateGame({
       [pickSide]: name,
     }).then(() => {
       setIsPlayer(true);
@@ -118,10 +122,12 @@ function GamePage({ params: { gameid } }: Props) {
     });
   };
 
+  //CHECK IF IS A PLAYER
   useEffect(() => {
     exist && player ? setIsPlayer(true) : setIsPlayer(false);
   }, []);
 
+  //CHECK IF GAME DOESN'T HAVE COMPLETE OPPONENTS
   useEffect(() => {
     if ((gameData?.white === "" || gameData?.black === "") && !isPlayer) {
       showAcceptChallenge(true);
@@ -138,7 +144,7 @@ function GamePage({ params: { gameid } }: Props) {
       <div>GamePage {gameid}</div>
       {isPlayer && movesTime.length < 2 && (
         <WaitingOnPlayer
-          startGame={startGame}
+          startGame={updateMoves}
           movesTime={movesTime}
           name={orientation === "white" ? gameData?.white : gameData?.black}
         />

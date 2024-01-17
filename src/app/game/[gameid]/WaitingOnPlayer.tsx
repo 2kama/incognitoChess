@@ -4,7 +4,7 @@ import React from "react";
 type Props = {
   movesTime: { data: DocumentData }[];
   name: string;
-  startGame: () => void;
+  startGame: (updateData: any) => void;
 };
 
 function WaitingOnPlayer({ movesTime, name, startGame }: Props) {
@@ -13,7 +13,7 @@ function WaitingOnPlayer({ movesTime, name, startGame }: Props) {
       {movesTime.some((el) => el.data.color === name) ? (
         "Waiting on Opponent"
       ) : (
-        <button onClick={startGame}>Start Game</button>
+        <button onClick={() => startGame({ color: name })}>Start Game</button>
       )}
     </>
   );
