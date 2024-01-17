@@ -23,6 +23,7 @@ import WaitingOnPlayer from "./WaitingOnPlayer";
 import Outcome from "./Outcome";
 import Offers from "./Offers";
 import FenNav from "./FenNav";
+import Chat from "./Chat";
 
 type Props = {
   params: { gameid: string };
@@ -219,8 +220,26 @@ function GamePage({ params: { gameid } }: Props) {
             </div>
             <div className="flex flex-col">
               <Outcome outcome={gameData.outCome} result={gameData.result} />
-              <FenNav fen={fen} end={gameData.end} setHistory={setHistory} history={history} limit={gameData.fen.length} />
-              <PGNBlock history={history} end={gameData.end} setHistory={setHistory} pgn={gameData.pgn} />
+              <FenNav
+                fen={fen}
+                end={gameData.end}
+                setHistory={setHistory}
+                history={history}
+                limit={gameData.fen.length}
+              />
+              <PGNBlock
+                history={history}
+                end={gameData.end}
+                setHistory={setHistory}
+                pgn={gameData.pgn}
+              />
+              {isPlayer && (
+                <Chat
+                  sendChat={updateGame}
+                  chats={gameData.chat}
+                  color={color}
+                />
+              )}
             </div>
           </>
         )}
