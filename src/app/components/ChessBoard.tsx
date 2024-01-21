@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Chessboard from "chessboardjsx";
 import { Chess } from "chess.js";
 import { useCheckDB } from "../hooks/useCheckDB";
+import useSound from "use-sound";
 
 type BoardType = {
   gameid: string;
@@ -11,6 +12,8 @@ type BoardType = {
   orientation: "white" | "black";
   end: boolean;
   previousMove: string;
+  width: number;
+  pgn: string;
   sendPlay: (
     gameFen: string,
     gameMove: string,
@@ -31,12 +34,21 @@ function ChessBoard({
   previousMove,
   sendPlay,
   notStarted,
+  width,
+  pgn,
 }: BoardType) {
   const { player, color } = useCheckDB(gameid);
   const [clickPiece, setPiece] = useState("");
   const [squareStyles, setSquareStyles] = useState({});
   const [previousMoveStyles, setPreviousMoveStyles] = useState({});
   const [inCheckStyles, setInCheckStyles] = useState({});
+
+  //BOARD SOUNDS
+  const [playMove] = useSound("/sounds/move.mp3");
+  const [playCheck] = useSound("/sounds/check.mp3");
+  const [playCapture] = useSound("/sounds/capture.mp3");
+  const [playCastle] = useSound("/sounds/castle.mp3");
+  const [playPromote] = useSound("/sounds/promote.mp3");
 
   const game = new Chess(fen);
 
@@ -51,6 +63,7 @@ function ChessBoard({
     }
   }, [previousMove]);
 
+  //DISPLAY CURRENT GAME STATUS
   const outCome = () => {
     let color = "";
     if (game.turn() === "w") {
@@ -125,7 +138,7 @@ function ChessBoard({
     return squares;
   };
 
-  //HIGHLIGHT KING IN CHECK
+  //HIGHLIGHT KING IN CHECK AND PLAY SOUNDS
   useEffect(() => {
     if (game.isCheck()) {
       const piece = { type: "k", color: game.turn() };
@@ -136,6 +149,20 @@ function ChessBoard({
     } else {
       setInCheckStyles({});
     }
+
+    setTimeout(() => {
+      if (game.isCheck()) {
+        playCheck();
+      } else if (pgn === "O-O" || pgn === "O-O-O") {
+        playCastle();
+      } else if (pgn?.includes("=")) {
+        playPromote();
+      } else if (pgn?.includes("x")) {
+        playCapture();
+      } else {
+        playMove();
+      }
+    }, 500);
   }, [fen]);
 
   //TRACK SQUARE CLICKS AND MOVES BY CLICKS
@@ -227,6 +254,8 @@ function ChessBoard({
           ...previousMoveStyles,
           ...squareStyles,
         }}
+        width={width}
+        showNotation={false}
       />
     </>
   );

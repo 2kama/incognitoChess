@@ -1,4 +1,8 @@
+"use client";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import { faPenNib } from "@fortawesome/free-solid-svg-icons";
 
 type Props = {
   outcome: string;
@@ -7,8 +11,9 @@ type Props = {
 
 function Outcome({ outcome, result }: Props) {
   return (
-    <div>
-      {outcome} {result ? `: ${result}` : ""}
+    <div className="bg-gray-600 p-2 rounded w-full mb-5 text-white">
+      <FontAwesomeIcon icon={faPenNib} className="mr-2" /> {outcome}{" "}
+      {result ? `: ${result}` : ""}
     </div>
   );
 }
