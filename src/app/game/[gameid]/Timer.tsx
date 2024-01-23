@@ -66,7 +66,7 @@ function Timer({
 
   const sendUpdate = () => {
     updateGame({
-      outCome: `${color} lost on time`,
+      outCome: `${color === "black" ? "White" : "Black"} won on time`,
       end: true,
       result: color === "black" ? "1 - 0" : "0 - 1",
     });

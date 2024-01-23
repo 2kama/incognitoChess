@@ -35,7 +35,7 @@ function Offers({ updateGame, color, drawOffer }: Props) {
               onClick={() =>
                 sendUpdate({
                   end: true,
-                  outCome: `${color} resigned`,
+                  outCome: `${color === "white" ? "Black won, " : "White won, "}${color} resigned`,
                   result: color === "white" ? "0 - 1" : "1 - 0",
                 })
               }
@@ -65,7 +65,7 @@ function Offers({ updateGame, color, drawOffer }: Props) {
               onClick={() =>
                 sendUpdate({
                   end: true,
-                  outCome: "Settled in a draw",
+                  outCome: "Game settled in a draw",
                   result: "1/2 - 1/2",
                 })
               }

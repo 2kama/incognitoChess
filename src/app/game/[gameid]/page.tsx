@@ -24,6 +24,7 @@ import Outcome from "./Outcome";
 import Offers from "./Offers";
 import FenNav from "./FenNav";
 import AcceptChallenge from "./AcceptChallenge";
+import EndGame from "./EndGame";
 
 type Props = {
   params: { gameid: string };
@@ -38,6 +39,7 @@ function GamePage({ params: { gameid } }: Props) {
   const [name, setName] = useState("");
   const [history, setHistory] = useState(1);
   const [boardWidth, setBoardWidth] = useState(0);
+  const [showEndGame, setShowEndGame] = useState(false);
 
   //GAMEBOARD DATA
   const [fen, setFen] = useState("");
@@ -156,6 +158,7 @@ function GamePage({ params: { gameid } }: Props) {
       showAcceptChallenge(false);
     }
 
+    setShowEndGame(gameData?.end);
     setFen(gameData?.fen[gameData.fen.length - history]);
     setPreviousMove(gameData?.moves[gameData.moves.length - history]);
   }, [gameData, history]);
@@ -177,6 +180,7 @@ function GamePage({ params: { gameid } }: Props) {
           setName={setName}
         />
       )}
+      {showEndGame && <EndGame outCome={gameData?.outCome} result={gameData?.result} setShowEndGame={setShowEndGame} />}
       <div className="flex flex-col md:flex-row">
         {gameData && (
           <>
