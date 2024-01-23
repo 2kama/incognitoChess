@@ -161,115 +161,109 @@ function GamePage({ params: { gameid } }: Props) {
   }, [gameData, history]);
 
   return (
-    <div className="flex flex-col w-full h-screen bg-gray-800 overflow-y-scroll">
-      <div className="flex-row flex bg-black h-16 w-full"></div>
-      <div className="flex-1 flex-col p-5 w-full lg:max-w-[1024px] mx-auto bg-gray-800">
-        <div className="w-full text-center bg-gray-600 text-white p-2 rounded">{`${gameData?.white} vs ${gameData?.black}`}</div>
-        {gameData && isPlayer && movesTime.length < 2 && (
-          <WaitingOnPlayer
-            startGame={updateMoves}
-            movesTime={movesTime}
-            name={orientation === "white" ? gameData?.white : gameData?.black}
-          />
-        )}
-        {gameData && acceptChallenge && (
-          <AcceptChallenge
-            sendAccept={sendAccept}
-            name={name}
-            setName={setName}
-          />
-        )}
-        <div className="flex flex-col md:flex-row">
-          {gameData && (
-            <>
-              <div
-                ref={boardRef}
-                className="flex flex-col mt-5 w-full md:w-3/5"
-              >
-                <div className="flex flex-row bg-gray-600 p-2 rounded w-full mb-5">
-                  <Player
-                    name={
-                      orientation === "white" ? gameData.black : gameData.white
-                    }
-                  />
-                  <Timer
-                    movesTime={movesTime}
-                    minutes={gameData.minutes}
-                    addSeconds={gameData.addSeconds}
-                    color={orientation === "white" ? "black" : "white"}
-                    timerStart={movesTime.length > 1}
-                    playerTurn={
-                      orientation === "white"
-                        ? gameData.turn === "black"
-                        : gameData.turn === "white"
-                    }
-                    end={gameData.end}
-                    isPlayer={isPlayer}
-                    updateGame={updateGame}
-                  />
-                </div>
-                <ChessBoard
-                  gameid={gameid}
-                  fen={fen}
-                  orientation={orientation}
-                  end={gameData.end}
-                  notStarted={movesTime.length < 2}
-                  previousMove={previousMove}
-                  sendPlay={sendPlay}
-                  width={boardWidth}
-                  pgn={gameData.pgn[gameData.pgn.length - history]}
+    <>
+      <div className="w-full text-center bg-gray-600 text-white p-2 rounded">{`${gameData?.white} vs ${gameData?.black}`}</div>
+      {gameData && isPlayer && movesTime.length < 2 && (
+        <WaitingOnPlayer
+          startGame={updateMoves}
+          movesTime={movesTime}
+          name={orientation === "white" ? gameData?.white : gameData?.black}
+        />
+      )}
+      {gameData && acceptChallenge && (
+        <AcceptChallenge
+          sendAccept={sendAccept}
+          name={name}
+          setName={setName}
+        />
+      )}
+      <div className="flex flex-col md:flex-row">
+        {gameData && (
+          <>
+            <div ref={boardRef} className="flex flex-col mt-5 w-full md:w-3/5">
+              <div className="flex flex-row bg-gray-600 p-2 rounded w-full mb-5">
+                <Player
+                  name={
+                    orientation === "white" ? gameData.black : gameData.white
+                  }
                 />
-                <div className="flex flex-row bg-gray-600 p-2 rounded w-full mt-5">
-                  <Player
-                    name={
-                      orientation === "white" ? gameData.white : gameData.black
-                    }
-                  />
-                  <Timer
-                    movesTime={movesTime}
-                    minutes={gameData.minutes}
-                    addSeconds={gameData.addSeconds}
-                    color={orientation === "white" ? "white" : "black"}
-                    timerStart={movesTime.length > 1}
-                    playerTurn={
-                      orientation === "white"
-                        ? gameData.turn === "white"
-                        : gameData.turn === "black"
-                    }
-                    end={gameData.end}
-                    isPlayer={isPlayer}
-                    updateGame={updateGame}
-                  />
-                </div>
-                {isPlayer && !gameData.end && (
-                  <Offers
-                    drawOffer={gameData.drawOffer}
-                    updateGame={updateGame}
-                    color={orientation}
-                  />
-                )}
-              </div>
-              <div className="flex flex-col mt-12 md:mt-5 md:pl-5 lg:pl-24 w-full md:w-2/5">
-                <Outcome outcome={gameData.outCome} result={gameData.result} />
-                <FenNav
-                  fen={fen}
+                <Timer
+                  movesTime={movesTime}
+                  minutes={gameData.minutes}
+                  addSeconds={gameData.addSeconds}
+                  color={orientation === "white" ? "black" : "white"}
+                  timerStart={movesTime.length > 1}
+                  playerTurn={
+                    orientation === "white"
+                      ? gameData.turn === "black"
+                      : gameData.turn === "white"
+                  }
                   end={gameData.end}
-                  setHistory={setHistory}
-                  history={history}
-                  limit={gameData.fen.length}
-                />
-                <PGNBlock
-                  history={history}
-                  end={gameData.end}
-                  setHistory={setHistory}
-                  pgn={gameData.pgn}
+                  isPlayer={isPlayer}
+                  updateGame={updateGame}
                 />
               </div>
-            </>
-          )}
-        </div>
+              <ChessBoard
+                gameid={gameid}
+                fen={fen}
+                orientation={orientation}
+                end={gameData.end}
+                notStarted={movesTime.length < 2}
+                previousMove={previousMove}
+                sendPlay={sendPlay}
+                width={boardWidth}
+                pgn={gameData.pgn[gameData.pgn.length - history]}
+              />
+              <div className="flex flex-row bg-gray-600 p-2 rounded w-full mt-5">
+                <Player
+                  name={
+                    orientation === "white" ? gameData.white : gameData.black
+                  }
+                />
+                <Timer
+                  movesTime={movesTime}
+                  minutes={gameData.minutes}
+                  addSeconds={gameData.addSeconds}
+                  color={orientation === "white" ? "white" : "black"}
+                  timerStart={movesTime.length > 1}
+                  playerTurn={
+                    orientation === "white"
+                      ? gameData.turn === "white"
+                      : gameData.turn === "black"
+                  }
+                  end={gameData.end}
+                  isPlayer={isPlayer}
+                  updateGame={updateGame}
+                />
+              </div>
+              {isPlayer && !gameData.end && (
+                <Offers
+                  drawOffer={gameData.drawOffer}
+                  updateGame={updateGame}
+                  color={orientation}
+                />
+              )}
+            </div>
+            <div className="flex flex-col mt-12 md:mt-5 md:pl-5 lg:pl-24 w-full md:w-2/5">
+              <Outcome outcome={gameData.outCome} result={gameData.result} />
+              <FenNav
+                fen={fen}
+                end={gameData.end}
+                setHistory={setHistory}
+                history={history}
+                limit={gameData.fen.length}
+              />
+              <PGNBlock
+                history={history}
+                end={gameData.end}
+                setHistory={setHistory}
+                pgn={gameData.pgn}
+              />
+            </div>
+          </>
+        )}
       </div>
-    </div>
+    </>
   );
 }
 

@@ -11,6 +11,10 @@ import {
   limit,
   updateDoc,
   doc,
+  where,
+  getDocs,
+  or,
+  and
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -38,5 +42,9 @@ export {
   limit,
   updateDoc,
   doc,
+  where,
+  getDocs,
+  or,
+  and
 };
 export type { DocumentData };
