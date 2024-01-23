@@ -40,6 +40,7 @@ function GamePage({ params: { gameid } }: Props) {
   const [history, setHistory] = useState(1);
   const [boardWidth, setBoardWidth] = useState(0);
   const [showEndGame, setShowEndGame] = useState(false);
+  const [titleText, setTitleText] = useState("Incognito Chess")
 
   //GAMEBOARD DATA
   const [fen, setFen] = useState("");
@@ -156,8 +157,10 @@ function GamePage({ params: { gameid } }: Props) {
   useEffect(() => {
     if ((gameData?.white === "" || gameData?.black === "") && !isPlayer) {
       showAcceptChallenge(true);
+      setTitleText(`Incognito Chess | ${gameData?.white === "" ? gameData?.black : gameData?.white} is requesting an opponent on a ${gameData?.minutes}|${gameData?.addSeconds} chess game.`)
     } else {
       showAcceptChallenge(false);
+      setTitleText(`Incognito Chess | watch ${gameData?.white} vs ${gameData?.black} game`)
     }
 
     setFen(gameData?.fen[gameData.fen.length - history]);
@@ -166,6 +169,7 @@ function GamePage({ params: { gameid } }: Props) {
 
   return (
     <>
+      <title>{titleText}</title>
       <div className="w-full text-center bg-gray-600 text-white p-2 rounded">{`${gameData?.white} vs ${gameData?.black}`}</div>
       {gameData && isPlayer && movesTime.length < 2 && (
         <WaitingOnPlayer

@@ -86,6 +86,7 @@ function Game() {
 
   return (
     <div className="flex flex-col w-full h-full items-center justify-center">
+      <title>Incognito Chess | Play New Game</title>
       <div className="text-gray-300 text-3xl mb-4">Play New Game</div>
       <div className="flex flex-col w-full rounded bg-gray-600 p-4 items-center">
         <input

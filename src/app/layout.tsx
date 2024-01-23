@@ -18,7 +18,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <div className="flex flex-col w-full h-screen bg-gray-800 overflow-y-scroll">
-          <div className="flex-row flex bg-black h-16 w-full"></div>
+          <div className="flex-row flex bg-black h-16 w-full">
+            <div className="text-white p-3 cursor-pointer text-2xl">Incognito Chess</div>
+          </div>
           <div className="flex-1 flex-col p-5 w-full lg:max-w-[1024px] mx-auto bg-gray-800">
             {children}
           </div>
