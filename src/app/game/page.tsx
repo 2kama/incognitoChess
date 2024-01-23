@@ -24,6 +24,9 @@ function Game() {
   const [min, setMin] = useState(1);
   const [sec, setSec] = useState(0);
   const [buttonDisable, setButtonDisable] = useState(false);
+  const [gameID, setGameID] = useState('unknown');
+
+  const { setGame } = useCheckDB(gameID);
 
   const side = ["black", "white"];
 
@@ -45,7 +48,7 @@ function Game() {
       result: "",
       drawOffer: "",
     }).then((docRef) => {
-      const { setGame } = useCheckDB(docRef.id);
+      setGameID(docRef.id)
       setGame(shuffleSide);
       router.push(`/game/${docRef.id}`);
     });
@@ -71,7 +74,7 @@ function Game() {
       updateDoc(doc(db, "games", gameData.id), {
         [pickSide]: name,
       }).then(() => {
-        const { setGame } = useCheckDB(gameData.id);
+        setGameID(gameData.id);
         setGame(pickSide);
         router.push(`/game/${gameData.id}`);
       });
@@ -143,7 +146,7 @@ function Game() {
               Find Game
             </button>
             <div className="text-xs text-gray-200 py-1 px-4">
-              You'd like to be randomly matched with an opponent
+              You would like to be randomly matched with an opponent
             </div>
           </div>
         </div>
