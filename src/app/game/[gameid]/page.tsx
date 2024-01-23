@@ -85,8 +85,10 @@ function GamePage({ params: { gameid } }: Props) {
     });
   };
 
-  //SET WIDTH OF CHESSBOARD
+  //SET WIDTH OF CHESSBOARD && CHECK ENDGAME MODAL
   useEffect(() => {
+    setShowEndGame(gameData?.end);
+
     if (boardRef.current) {
       setBoardWidth(boardRef.current.offsetWidth);
     }
@@ -158,7 +160,6 @@ function GamePage({ params: { gameid } }: Props) {
       showAcceptChallenge(false);
     }
 
-    setShowEndGame(gameData?.end);
     setFen(gameData?.fen[gameData.fen.length - history]);
     setPreviousMove(gameData?.moves[gameData.moves.length - history]);
   }, [gameData, history]);
@@ -180,7 +181,13 @@ function GamePage({ params: { gameid } }: Props) {
           setName={setName}
         />
       )}
-      {showEndGame && <EndGame outCome={gameData?.outCome} result={gameData?.result} setShowEndGame={setShowEndGame} />}
+      {showEndGame && (
+        <EndGame
+          outCome={gameData?.outCome}
+          result={gameData?.result}
+          setShowEndGame={setShowEndGame}
+        />
+      )}
       <div className="flex flex-col md:flex-row">
         {gameData && (
           <>
