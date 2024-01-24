@@ -133,7 +133,11 @@ function Game() {
               }`}
               onClick={createGame}
             >
-              {buttonDisable ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Create Game'}
+              {buttonDisable ? (
+                <FontAwesomeIcon icon={faSpinner} spin />
+              ) : (
+                "Create Game"
+              )}
             </button>
             <div className="text-xs text-gray-200 py-1 px-4">
               You already have an opponent you wanna play with
@@ -149,10 +153,14 @@ function Game() {
               }`}
               onClick={findGame}
             >
-              {buttonDisable ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Find Game'}
+              {buttonDisable ? (
+                <FontAwesomeIcon icon={faSpinner} spin />
+              ) : (
+                "Find Game"
+              )}
             </button>
             <div className="text-xs text-gray-200 py-1 px-4">
-              You'd like to be randomly matched with an opponent
+              You would like to be randomly matched with an opponent
             </div>
           </div>
         </div>
