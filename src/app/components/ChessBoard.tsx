@@ -37,7 +37,7 @@ function ChessBoard({
   width,
   pgn,
 }: BoardType) {
-  const { player, color } = useCheckDB(gameid);
+  const { player, color } = useCheckDB();
   const [clickPiece, setPiece] = useState("");
   const [squareStyles, setSquareStyles] = useState({});
   const [previousMoveStyles, setPreviousMoveStyles] = useState({});
@@ -167,7 +167,7 @@ function ChessBoard({
 
   //TRACK SQUARE CLICKS AND MOVES BY CLICKS
   const onSquareClick = async (square: string) => {
-    if (!player || end || notStarted) return;
+    if (!player(gameid) || end || notStarted) return;
 
     const setSquareColor = () => {
       setPiece(square);
@@ -181,8 +181,8 @@ function ChessBoard({
     } else {
       if (
         !(
-          (game.turn() === "w" && player && color === "white") ||
-          (game.turn() === "b" && player && color === "black")
+          (game.turn() === "w" && player(gameid) && color(gameid) === "white") ||
+          (game.turn() === "b" && player(gameid) && color(gameid) === "black")
         )
       ) {
         return setSquareColor();
@@ -211,7 +211,7 @@ function ChessBoard({
   //ARE PIECES DRAGGABLE
   const draggable = () => {
     return (
-      player &&
+      player(gameid) &&
       !game.isCheckmate() &&
       !game.isDraw() &&
       !game.isStalemate() &&
@@ -225,12 +225,12 @@ function ChessBoard({
   const allowDrag = ({ piece }: { piece: string }) => {
     if (
       (game.turn() === "w" &&
-        player &&
-        color === "white" &&
+        player(gameid) &&
+        color(gameid) === "white" &&
         piece.search(/^w/) >= 0) ||
       (game.turn() === "b" &&
-        player &&
-        color === "black" &&
+        player(gameid) &&
+        color(gameid) === "black" &&
         piece.search(/^b/) >= 0)
     ) {
       return true;
