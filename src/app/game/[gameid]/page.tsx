@@ -1,8 +1,7 @@
 "use client";
 import ChessBoard from "@/app/components/ChessBoard";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-import { notFound } from "next/navigation";
 import { useCheckDB } from "@/app/hooks/useCheckDB";
 import {
   DocumentData,
@@ -32,8 +31,8 @@ type Props = {
 
 function GamePage({ params: { gameid } }: Props) {
   const [gameData, setGameData] = useState<DocumentData | null>();
-  const { exist, color, player, setGame } = useCheckDB(gameid);
-  const [orientation, setOrientation] = useState(color);
+  const { exist, color, player, setGame } = useCheckDB();
+  const [orientation, setOrientation] = useState(color(gameid));
   const [isPlayer, setIsPlayer] = useState(false);
   const [acceptChallenge, showAcceptChallenge] = useState(false);
   const [name, setName] = useState("");
@@ -143,14 +142,14 @@ function GamePage({ params: { gameid } }: Props) {
       }).then(() => {
         setIsPlayer(true);
         setOrientation(pickSide);
-        setGame(pickSide);
+        setGame(pickSide, gameid);
       });
     }
   };
 
   //CHECK IF IS A PLAYER
   useEffect(() => {
-    exist && player ? setIsPlayer(true) : setIsPlayer(false);
+    exist(gameid) && player(gameid) ? setIsPlayer(true) : setIsPlayer(false);
   }, []);
 
   //CHECK IF GAME DOESN'T HAVE COMPLETE OPPONENTS

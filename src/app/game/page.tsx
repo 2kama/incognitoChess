@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { useRouter } from "next/navigation";
 import { useCheckDB } from "../hooks/useCheckDB";
@@ -24,11 +24,9 @@ function Game() {
   const [min, setMin] = useState(1);
   const [sec, setSec] = useState(0);
   const [buttonDisable, setButtonDisable] = useState(false);
-  const [gameID, setGameID] = useState('unknown');
-
-  const { setGame } = useCheckDB(gameID);
 
   const side = ["black", "white"];
+  const { setGame } = useCheckDB();
 
   const createGame = async () => {
     setButtonDisable(true);
@@ -48,8 +46,7 @@ function Game() {
       result: "",
       drawOffer: "",
     }).then((docRef) => {
-      setGameID(docRef.id)
-      setGame(shuffleSide);
+      setGame(shuffleSide, docRef.id);
       router.push(`/game/${docRef.id}`);
     });
   };
@@ -74,8 +71,7 @@ function Game() {
       updateDoc(doc(db, "games", gameData.id), {
         [pickSide]: name,
       }).then(() => {
-        setGameID(gameData.id);
-        setGame(pickSide);
+        setGame(pickSide, gameData.id);
         router.push(`/game/${gameData.id}`);
       });
     } else {
@@ -128,7 +124,11 @@ function Game() {
           <div className="flex flex-col">
             <button
               disabled={!name || buttonDisable}
-              className="px-10 py-4 text-gray-200 bg-blue-400 rounded hover:bg-blue-800"
+              className={`px-10 py-4 text-gray-200 rounded ${
+                !name || buttonDisable
+                  ? "bg-gray-400"
+                  : "bg-blue-400 hover:bg-blue-800"
+              }`}
               onClick={createGame}
             >
               Create Game
@@ -140,13 +140,17 @@ function Game() {
           <div className="flex flex-col">
             <button
               disabled={!name || buttonDisable}
-              className="px-10 py-4 text-gray-200 bg-red-400 rounded hover:bg-red-800"
+              className={`px-10 py-4 text-gray-200 rounded ${
+                !name || buttonDisable
+                  ? "bg-gray-400"
+                  : "bg-red-400 hover:bg-red-800"
+              }`}
               onClick={findGame}
             >
               Find Game
             </button>
             <div className="text-xs text-gray-200 py-1 px-4">
-              You would like to be randomly matched with an opponent
+              You'd like to be randomly matched with an opponent
             </div>
           </div>
         </div>
