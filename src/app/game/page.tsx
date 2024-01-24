@@ -17,6 +17,8 @@ import {
   updateDoc,
   where,
 } from "@/utils/firebase";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 function Game() {
   const router = useRouter();
@@ -131,7 +133,7 @@ function Game() {
               }`}
               onClick={createGame}
             >
-              Create Game
+              {buttonDisable ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Create Game'}
             </button>
             <div className="text-xs text-gray-200 py-1 px-4">
               You already have an opponent you wanna play with
@@ -147,7 +149,7 @@ function Game() {
               }`}
               onClick={findGame}
             >
-              Find Game
+              {buttonDisable ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Find Game'}
             </button>
             <div className="text-xs text-gray-200 py-1 px-4">
               You'd like to be randomly matched with an opponent
